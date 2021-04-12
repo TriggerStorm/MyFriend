@@ -1,4 +1,4 @@
-package com.example.myfriend
+package com.example.myfriend.gui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,23 +9,57 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import com.example.myfriend.Model.DBFriends
+
+import android.widget.ListAdapter
+import android.widget.ArrayAdapter
+import com.example.myfriend.R
+import java.io.Serializable
 
 
 class MainActivity : AppCompatActivity() {
 
     val TAG = "xyz"
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val txt1 = findViewById<TextView>(R.id.txt1)
+       // val txt1 = findViewById<ListView>(R.id.lvFriends)
+       // registerForContextMenu(txt1)
+        val friends = DBFriends()
 
-        registerForContextMenu(txt1)
+        val lV = findViewById<ListView>(R.id.lvFriends)
+
+        val friendNames = friends.getAllNames()
+
+        val ad: ListAdapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1, friendNames
+        )
+
+        lV.adapter = ad
+
+
+        lV.setOnItemClickListener { _, _, position, _ -> onListItemClick(position) }
+
+
     }
+
+    fun onListItemClick( position: Int ) {
+        // position is in the list!
+        // first get the name of the person clicked
+        //val name = Friends().getAll()[position].name
+        val intent = Intent(this, DetailsActivity::class.java)
+        val friend = DBFriends().getAll()[position]
+        intent.putExtra("friend", friend)
+        startActivity(intent)
+
+    }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -57,13 +91,17 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateContextMenu(
+
+
+
+
+   /* override fun onCreateContextMenu(
         menu: ContextMenu?, v: View,
         menuInfo: ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
         Log.d(TAG, "Context menu created ")
-        if (v === findViewById<TextView>(R.id.txt1)) {
+        if (v === findViewById<ListView>(R.id.lvFriends)) {
             menuInflater.inflate(R.menu.context_menu, menu)
         }
     }
@@ -87,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             else -> super.onContextItemSelected(item)
         }
     }
-
+*/
 }
 
 

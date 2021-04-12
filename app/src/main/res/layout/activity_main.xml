@@ -4,25 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".gui.MainActivity">
 
 
-    <TextView
+    <ListView
+        android:id="@+id/lvFriends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Text1"
-        android:id="@+id/txt1"
-        android:paddingBottom="16dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Text2"
-        android:id="@+id/txt2"
-        android:layout_below="@+id/txt1"
         />
 
 
