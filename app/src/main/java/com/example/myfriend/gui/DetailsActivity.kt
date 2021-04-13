@@ -33,9 +33,10 @@ class DetailsActivity : AppCompatActivity() {
                 val res: Resources = resources
                 val mDrawableName = friend.picture
                 val resID: Int = res.getIdentifier(mDrawableName, "drawable", packageName)
-                val drawable: Drawable = res.getDrawable(resID)
-                img.setImageDrawable(drawable)
+               // val drawable: Drawable = res.getDrawable(resID)
 
+
+                img.setImageResource(R.drawable.trash)
                 birthday.setText(friend.birthday)
                 webside.setText(friend.webside)
                 mail.setText(friend.mail)

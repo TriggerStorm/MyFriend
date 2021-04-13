@@ -1,8 +1,15 @@
 package com.example.myfriend.Model
 
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
 
-class BE_Friend (var name: String,
+@Entity
+data class BE_Friend (
+        @PrimaryKey(autoGenerate = true)
+                 var id:Int,
+                 var name: String,
                  var address: String,
                  var location: String,
                  var phoneNr: String,

@@ -4,18 +4,20 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextMenu
-import android.view.ContextMenu.ContextMenuInfo
+
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+
 import android.widget.*
 import com.example.myfriend.Model.DBFriends
 
 import android.widget.ListAdapter
 import android.widget.ArrayAdapter
+import com.example.myfriend.Model.BE_Friend
+import com.example.myfriend.Model.FriendRepositoryInDB
 import com.example.myfriend.R
-import java.io.Serializable
+import androidx.lifecycle.Observer
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,9 +29,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-       // val txt1 = findViewById<ListView>(R.id.lvFriends)
-       // registerForContextMenu(txt1)
-        val friends = DBFriends()
+        FriendRepositoryInDB.initialize(this)
+        setupDataObserver()
+
+        //insertTestData()
+       /* val friends = DBFriends()
 
         val lV = findViewById<ListView>(R.id.lvFriends)
 
@@ -43,9 +47,36 @@ class MainActivity : AppCompatActivity() {
         lV.adapter = ad
 
 
-        lV.setOnItemClickListener { _, _, position, _ -> onListItemClick(position) }
+        lV.setOnItemClickListener { _, _, position, _ -> onListItemClick(position) }*/
 
 
+    }
+
+    private fun insertTestData() {
+        val mRep = FriendRepositoryInDB.get()
+        mRep.insert(BE_Friend(0,"Jonas","jonnystreed 21", "x1 y 20","25485652","Jonasgmail.com","jonweb.org", "02/05/1958","R.drawable.favorite"))
+        mRep.insert(BE_Friend(0,"Timmy","Timmytreed 11", "x1 y 20","2123122","Timmygmail.com","Timmyweb.org", "02/01/1948","picuresting"))
+        mRep.insert(BE_Friend(0,"BOB","BOBstreed 41", "x1 y 20","25235642","BOBgmail.com","BOBweb.org", "12/10/1998","picuresting"))
+        mRep.insert(BE_Friend(0,"Sara","Sarastreed 21", "x1 y 20","24485611","Sarasgmail.com","Saraweb.org", "01/01/1918","picuresting"))
+    }
+
+    private fun setupDataObserver() {
+        val mRep = FriendRepositoryInDB.get()
+        val updateGUIObserver = Observer<List<BE_Friend>>{ friend ->
+            val asStrings = friend.map { f -> "${f.id}, ${f.name}, ${f.address}, ${f.phoneNr}, ${f.picture}"}
+            val adapter: ListAdapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                asStrings.toTypedArray()
+            )
+            val lV = findViewById<ListView>(R.id.lvFriends)
+            lV.adapter = adapter
+            Log.d(TAG, "UpdateGUI Observer notified")
+        }
+        mRep.getAllLiveData().observe(this, updateGUIObserver)
+
+        val lV = findViewById<ListView>(R.id.lvFriends)
+        lV.onItemClickListener = AdapterView.OnItemClickListener {_,_,pos,_ -> onListItemClick(pos)}
     }
 
     fun onListItemClick( position: Int ) {
@@ -91,41 +122,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
-
-
-
-   /* override fun onCreateContextMenu(
-        menu: ContextMenu?, v: View,
-        menuInfo: ContextMenuInfo?
-    ) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        Log.d(TAG, "Context menu created ")
-        if (v === findViewById<ListView>(R.id.lvFriends)) {
-            menuInflater.inflate(R.menu.context_menu, menu)
-        }
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, "Context item selected " + item.itemId)
-        return when (item.itemId) {
-            R.id.create1 -> {
-                Toast.makeText(baseContext, "CREATE", Toast.LENGTH_LONG).show()
-                true
-            }
-            R.id.update1 -> {
-                    val intent = Intent(this, DetailsActivity::class.java)
-                    startActivity(intent)
-                true
-            }
-            R.id.print -> {
-                Toast.makeText(this, "Print ....", Toast.LENGTH_SHORT).show()
-                true
-            }
-            else -> super.onContextItemSelected(item)
-        }
-    }
-*/
 }
 
 

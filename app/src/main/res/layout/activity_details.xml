@@ -28,9 +28,9 @@
 
         <androidx.constraintlayout.utils.widget.ImageFilterView
             android:id="@+id/img_pic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            tools:srcCompat="@drawable/trash" />
 
         <EditText
             android:id="@+id/ip_Name"
@@ -100,8 +100,8 @@
 
             <ImageButton
                 android:id="@+id/ibn_call"
-                android:layout_width="102dp"
-                android:layout_height="91dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:maxWidth="42dp"
                 android:maxHeight="42dp"
                 android:scaleType="fitCenter"
@@ -109,10 +109,17 @@
 
         <ImageButton
             android:id="@+id/ibn_text"
-            android:layout_width="106dp"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             app:srcCompat="@drawable/messages"
             android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:id="@+id/ibn_delete"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/trash" />
 
     </LinearLayout>
 </RelativeLayout>
