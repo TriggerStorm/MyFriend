@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     val TAG = "xyz"
 
+    val PHONE_NO = "12345678"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,6 +123,10 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+
+
+
 
 }
 

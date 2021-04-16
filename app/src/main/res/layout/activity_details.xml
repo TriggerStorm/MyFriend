@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/ip_Name"
             android:layout_toEndOf="@+id/ip_Address"
+            android:onClick="onClickGetLocation"
             android:text="Home" />
 
         <EditText
@@ -127,6 +128,7 @@
             android:maxWidth="42dp"
             android:maxHeight="42dp"
             android:scaleType="fitCenter"
+            android:onClick="onClickCALL"
             app:srcCompat="@drawable/phone" />
 
         <ImageButton
@@ -136,7 +138,8 @@
             android:layout_toEndOf="@id/ibn_call"
             android:layout_below="@id/ip_Address"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/messages" />
+            app:srcCompat="@drawable/messages"
+            android:onClick="onClickSMS"/>
 
         <ImageButton
             android:id="@+id/ibn_delete"
@@ -148,6 +151,26 @@
             android:layout_marginBottom="10dp"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/trash" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toEndOf="@id/ip_Email"
+            android:layout_below="@id/ibn_call"
+            android:scaleType="fitCenter"
+            android:onClick="onClickEMAIL"
+            app:srcCompat="@drawable/email" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:layout_toEndOf="@id/ip_Website"
+            android:layout_below="@id/ip_Bday"
+            android:onClick="onClickBROWSER"
+            app:srcCompat="@drawable/website" />
 
 
 </RelativeLayout>

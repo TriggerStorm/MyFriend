@@ -1,21 +1,32 @@
 package com.example.myfriend.gui
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.telephony.SmsManager
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.example.myfriend.Model.BE_Friend
+import com.example.myfriend.Model.FriendRepositoryInDB
 import com.example.myfriend.R
 import java.io.File
 import java.io.IOException
@@ -26,6 +37,10 @@ import java.util.*
 class DetailsActivity : AppCompatActivity() {
     val isNew: Boolean = false
 
+    var PHONE_NO = "12345678"
+    val TAG = "xyz"
+
+    var dfriend = "" as BE_Friend
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,19 +53,19 @@ class DetailsActivity : AppCompatActivity() {
             val webside =findViewById<EditText>(R.id.ip_Website)
             val birthday = findViewById<EditText>(R.id.ip_Bday)
             val img = findViewById<ImageView>(R.id.img_pic)
-            //val savebn = findViewById<Button>()
-            //val picture = findViewById<>(R.id.imgPicture)
             if (intent.extras != null) {
                 val extras: Bundle = intent.extras!!
                 val friend = extras.getSerializable("friend") as BE_Friend
 
+                dfriend = friend
                 val res: Resources = resources
                 val mDrawableName = friend.picture
                 val resID: Int = res.getIdentifier(mDrawableName, "drawable", packageName)
-               // val drawable: Drawable = res.getDrawable(resID)
+
 
                 img.setOnClickListener { dispatchTakePictureIntent() }
 
+                PHONE_NO = friend.phoneNr
 
                 img.setImageResource(R.drawable.trash)
                 birthday.setText(friend.birthday)
@@ -132,6 +147,82 @@ class DetailsActivity : AppCompatActivity() {
     }*/
 
 
+    fun onClickSMS(view: View) {
+        showYesNoDialog()
+    }
+
+    fun onClickCALL(view: View) {
+        val intent = Intent(Intent.ACTION_DIAL)
+        intent.data = Uri.parse("tel:$PHONE_NO")
+        startActivity(intent)
+    }
+
+    fun onClickEMAIL(view: View) {
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.type = "plain/text"
+        val mail = findViewById<EditText>(R.id.ip_Email)
+        val receivers = arrayOf(mail.text.toString())
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, receivers)
+        startActivity(emailIntent)
+    }
+
+    fun onClickBROWSER(view: View) {
+        val i = Intent(Intent.ACTION_VIEW)
+        val webside = findViewById<EditText>(R.id.ip_Website)
+        val url = "http://" + webside.text.toString()
+        i.data = Uri.parse(url)
+        startActivity(i)
+    }
+
+    private fun startSMSActivity() {
+        val sendIntent = Intent(Intent.ACTION_VIEW)
+        sendIntent.data = Uri.parse("sms:$PHONE_NO")
+        startActivity(sendIntent)
+    }
+
+   //val PERMISSION_REQUEST_CODE = 1
+
+
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+        Log.d(TAG, "Permission: " + permissions[0] + " - grantResult: " + grantResults[0])
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            sendMessage()
+        }
+    }
+
+    private fun sendMessage() {
+        val m = SmsManager.getDefault()
+        val text = ""
+        m.sendTextMessage(PHONE_NO, null, text, null, null)
+    }
+    private fun showYesNoDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("SMS Handling")
+        alertDialogBuilder
+                .setMessage("Click Start to start SMS app...")
+                .setCancelable(true)
+                .setNegativeButton("Start", { dialog, id -> startSMSActivity() })
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun onClickGetLocation(view: View) {
+
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
+        dfriend.location = location.toString()
+
+        val mRep = FriendRepositoryInDB.get()
+
+        if (dfriend !== "" as BE_Friend) {
+            mRep.update(dfriend)
+        }
+    }
 
 
 }
