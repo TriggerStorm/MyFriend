@@ -152,6 +152,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"
             android:scaleType="fitCenter"
+            android:onClick="onClicKDelete"
             app:srcCompat="@drawable/trash" />
 
         <ImageButton
