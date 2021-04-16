@@ -1,6 +1,7 @@
 package com.example.myfriend.Model
 
 
+import android.telephony.CarrierConfigManager
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable

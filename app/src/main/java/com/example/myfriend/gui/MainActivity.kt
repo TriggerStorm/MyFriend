@@ -113,7 +113,8 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_new -> {
-                val intent = Intent(this, DetailsActivity::class.java)
+                val intent = Intent(this, DetailsActivity::class.java )
+                intent.putExtra("isNew" , true)
                 startActivity(intent)
             }
             R.id.action_close -> {

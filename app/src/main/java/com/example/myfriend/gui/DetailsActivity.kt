@@ -9,6 +9,8 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
@@ -18,13 +20,11 @@ import android.provider.MediaStore
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import com.example.myfriend.Model.BE_Friend
 import com.example.myfriend.Model.FriendRepositoryInDB
 import com.example.myfriend.R
@@ -32,20 +32,29 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.log
 
 
 class DetailsActivity : AppCompatActivity() {
-    val isNew: Boolean = false
+    var areNew: Boolean = false
 
     var PHONE_NO = "12345678"
+
     val TAG = "xyz"
 
-    var dfriend = "" as BE_Friend
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
+        var isNew = getIntent().getExtras()?.getBoolean("isNew");
+        if (isNew != null) {
+            areNew = isNew
+        }
+        Log.d("xyz", isNew.toString())
+        Log.d("xyz", areNew.toString())
         if(isNew === false) {
+
            val tvName = findViewById<EditText>(R.id.ip_Name)
             val tvPhone = findViewById<EditText>(R.id.ip_phone)
             val address = findViewById<EditText>(R.id.ip_Address)
@@ -53,11 +62,20 @@ class DetailsActivity : AppCompatActivity() {
             val webside =findViewById<EditText>(R.id.ip_Website)
             val birthday = findViewById<EditText>(R.id.ip_Bday)
             val img = findViewById<ImageView>(R.id.img_pic)
+            val home = findViewById<Button>(R.id.bn_Home)
+            val show = findViewById<Button>(R.id.bn_Show)
+            val pcall = findViewById<ImageButton>(R.id.ibn_call)
+            val pdel = findViewById<ImageButton>(R.id.ibn_delete)
+            val ptext = findViewById<ImageButton>(R.id.ibn_text)
+            val save = findViewById<Button>(R.id.bn_Save)
+
+
+
             if (intent.extras != null) {
                 val extras: Bundle = intent.extras!!
                 val friend = extras.getSerializable("friend") as BE_Friend
 
-                dfriend = friend
+
                 val res: Resources = resources
                 val mDrawableName = friend.picture
                 val resID: Int = res.getIdentifier(mDrawableName, "drawable", packageName)
@@ -75,7 +93,17 @@ class DetailsActivity : AppCompatActivity() {
                 tvName.setText(friend.name)
                 tvPhone.setText(friend.phoneNr)
             } else {
-                Log.d("xyz", "system error: intent.extras for detailactivity is null!!!!")
+
+                img.visibility = View.INVISIBLE
+                /*home.isVisible = false
+                show.visibility = View.INVISIBLE
+                pcall.visibility = View.INVISIBLE
+                pdel.visibility = View.INVISIBLE
+                ptext.visibility = View.INVISIBLE*/
+
+
+
+
             }
         }
         else{
@@ -83,6 +111,33 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
         val REQUEST_IMAGE_CAPTURE = 1
+
+    fun addNewFriend(view: View) {
+
+        val mRep = FriendRepositoryInDB.get()
+        val tvName = findViewById<EditText>(R.id.ip_Name)
+        val tvPhone = findViewById<EditText>(R.id.ip_phone)
+        val mail = findViewById<EditText>(R.id.ip_Email)
+        val address = findViewById<EditText>(R.id.ip_Address)
+        val webside =findViewById<EditText>(R.id.ip_Website)
+        val birthday = findViewById<EditText>(R.id.ip_Bday)
+        val img = findViewById<ImageView>(R.id.img_pic)
+        var mailtext = mail.text.toString()
+        var nametext = tvName.text.toString()
+        var adressText = address.text.toString()
+        var nrtext = tvPhone.text.toString()
+        var webText = webside.text.toString()
+        var bdText = birthday.text.toString()
+        var imgText = ""
+
+
+
+        if(areNew == true){
+        mRep.insert(BE_Friend(0,nametext,adressText, "",nrtext,mailtext,webText, bdText,""))
+        }else
+            mRep.update((BE_Friend(0,nametext,adressText, "",nrtext,mailtext,webText, bdText,imgText)))
+
+    }
 
          private fun dispatchTakePictureIntent() {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -120,31 +175,6 @@ class DetailsActivity : AppCompatActivity() {
             currentPhotoPath = absolutePath
         }
     }
-   /* private fun dispatchTakePictureIntent2() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                // Create the File where the photo should go
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) {
-                    // Error occurred while creating the File
-
-                    null
-                }
-                // Continue only if the File was successfully created
-                photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                            this,
-                            "com.example.android.fileprovider",
-                            it
-                    )
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                }
-            }
-        }
-    }*/
 
 
     fun onClickSMS(view: View) {
@@ -211,18 +241,70 @@ class DetailsActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun onClickGetLocation(view: View) {
+        startListening()
 
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val slocaton = location.toString()
 
-        dfriend.location = location.toString()
+        if (intent.extras != null) {
+            val extras: Bundle = intent.extras!!
+            val friend = extras.getSerializable("friend") as BE_Friend
+
+        Toast.makeText(this, slocaton, Toast.LENGTH_LONG).show()
+        Log.d("tag", slocaton)
+        friend.location = location.toString()
 
         val mRep = FriendRepositoryInDB.get()
 
-        if (dfriend !== "" as BE_Friend) {
-            mRep.update(dfriend)
+       if (location != null) {
+            mRep.update(friend)
+        }
+            else{
+            return}
         }
     }
+
+    var myLocationListener: LocationListener? = null
+
+    @SuppressLint("MissingPermission")
+    private fun startListening() {
+
+        if (myLocationListener == null)
+            myLocationListener = object : LocationListener {
+                var count: Int = 0
+
+                override fun onLocationChanged(location: Location) {
+                    count++
+                    Log.d(TAG, "Location changed")
+                }
+
+                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+
+                }
+            }
+
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                0,
+                0.0F,
+                myLocationListener!!)
+
+    }
+
+    private fun stopListening() {
+
+        if (myLocationListener == null) return
+
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager.removeUpdates(myLocationListener!!)
+    }
+
+    override fun onStop(){
+        stopListening()
+        super.onStop()
+    }
+
 
 
 }

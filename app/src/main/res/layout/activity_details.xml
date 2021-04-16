@@ -109,7 +109,8 @@
             android:layout_toEndOf="@id/ibn_delete"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="250dp"
-            android:text="save" />
+            android:text="save"
+            android:onClick="addNewFriend"/>
 
         <Button
             android:id="@+id/bn_Show"
@@ -117,7 +118,8 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/bn_Home"
             android:layout_below="@id/ip_Name"
-            android:text="Show" />
+            android:text="Show"
+            android:visibility="visible"/>
 
         <ImageButton
             android:id="@+id/ibn_call"
